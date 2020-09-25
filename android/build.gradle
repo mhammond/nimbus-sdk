@@ -10,7 +10,7 @@ buildscript {
     ext.jna_version = '5.6.0'
     ext.android_gradle_plugin_version = '3.6.0'
     ext.android_components_version = '56.0.0'
-//    ext mozilla_appservices_version = '63.0.0'
+    ext.mozilla_appservices_version = '63.0.0'
 
     ext.build = [
             ndkVersion: "21.3.6528147", // Keep it in sync in TC Dockerfile.
@@ -92,7 +92,9 @@ dependencies {
     api "org.mozilla.components:concept-fetch:$android_components_version"
     jnaForTest "net.java.dev.jna:jna:$jna_version@jar"
     implementation "net.java.dev.jna:jna:$jna_version@aar"
-    implementation 'com.google.protobuf:protobuf-javalite:3.11.4'
+    implementation "com.google.protobuf:protobuf-javalite:3.11.4"
+    implementation "org.mozilla.appservices:native-support:${mozilla_appservices_version}"
+    implementation "org.mozilla.appservices:httpconfig:${mozilla_appservices_version}"
 }
 
 android {

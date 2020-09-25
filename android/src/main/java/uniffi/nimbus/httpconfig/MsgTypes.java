@@ -10,10 +10,12 @@
 
 //package uniffi.nimbus;
 
-why is this syntax error ignored? I see no evidence of any attempt to
+/*why is this syntax error ignored? I see no evidence of any attempt to
 even compile this file. But a .kt file next to it is built.
 
-(Note package names below need to be adjusted once this "correctly fails")
+(Note package names below need to be adjusted once this "correctly fails")*/
+
+package uniffi.nimbus.httpconfig;
 
 public final class MsgTypes {
   private MsgTypes() {}

@@ -6,13 +6,14 @@
 // (and can we avoid the namespace changes? Does it matter?)
 
 // XXX - add comment about why this specific namespace even though there's nothing 'uniffi' about it!
-package uniffi.nimbus;
+package uniffi.nimbus
 
 import com.google.protobuf.ByteString
 import mozilla.appservices.support.native.RustBuffer
 import mozilla.components.concept.fetch.Client
 import mozilla.components.concept.fetch.MutableHeaders
 import mozilla.components.concept.fetch.Request
+import uniffi.nimbus.httpconfig.MsgTypes
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantReadWriteLock
 import kotlin.concurrent.read
@@ -75,7 +76,7 @@ object RustHttpConfig {
     }
 
     @Suppress("TooGenericExceptionCaught", "ReturnCount")
-    internal fun doFetch(b: RustBuffer.ByValue): RustBuffer.ByValue {
+    internal fun doFetch(b: RustBuffer.ByValue): mozilla.appservices.support.native.RustBuffer.ByValue {
         lock.read {
             try {
                 val request = MsgTypes.Request.parseFrom(b.asCodedInputStream())
