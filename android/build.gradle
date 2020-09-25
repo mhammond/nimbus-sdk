@@ -3,13 +3,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'idea'
 apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
-
+apply plugin: 'com.google.protobuf'
 
 buildscript {
     ext.kotlin_version = '1.3.71'
     ext.jna_version = '5.6.0'
     ext.android_gradle_plugin_version = '3.6.0'
-    ext.android_components_version = '47.0.0'
+    ext.android_components_version = '56.0.0'
+//    ext mozilla_appservices_version = '63.0.0'
 
     ext.build = [
             ndkVersion: "21.3.6528147", // Keep it in sync in TC Dockerfile.
@@ -35,6 +36,9 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:$android_gradle_plugin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // Viaduct initialization
+        classpath 'com.google.protobuf:protobuf-gradle-plugin:0.8.12'
 
         // Publish.
         classpath 'digital.wup:android-maven-publish:3.6.2'
@@ -66,9 +70,29 @@ configurations {
     jnaForTest
 }
 
+/* - I don't think we need this unless we want to drag in protobuf build steps
+(which we might - but don't need it right now!)
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.11.4'
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                java {
+                    option "lite"
+                }
+            }
+        }
+    }
+}
+*/
+
 dependencies {
+    api "org.mozilla.components:concept-fetch:$android_components_version"
     jnaForTest "net.java.dev.jna:jna:$jna_version@jar"
     implementation "net.java.dev.jna:jna:$jna_version@aar"
+    implementation 'com.google.protobuf:protobuf-javalite:3.11.4'
 }
 
 android {
@@ -83,6 +107,7 @@ android {
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
+        buildConfigField("String", "LIBRARY_VERSION", "\"TODO - WORK THIS OUT\"")
     }
 
     buildTypes {
@@ -218,6 +243,8 @@ android.libraryVariants.all { variant ->
     }
     variant.javaCompileProvider.get().dependsOn(t)
     def sourceSet = variant.sourceSets.find { it.name == variant.name }
+    // WTF - explicitly saying this is for *java* sources - but .kt files in there work even though .java apparently do not.
+    sourceSet.java.srcDir new File("${project.projectDir}/src/main/java")
     sourceSet.java.srcDir new File(buildDir, "generated/source/uniffi/${variant.name}/java")
     // XXX: I've been trying to make this work but I can't, so the compiled bindings will show as "regular sources" in Android Studio.
     idea.module.generatedSourceDirs += file("${buildDir}/generated/source/uniffi/${variant.name}/java/uniffi")
